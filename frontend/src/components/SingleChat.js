@@ -19,7 +19,7 @@ import "./styles.css";
 import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
-const ENDPOINT = "https://realtime-chat-rooms.herokuapp.com/";
+const ENDPOINT = "https://realtime-chat-socketio-app.herokuapp.com/";
 var socket, selectedChatCompare;
 
 function SingleChat({ fetchAgain, setFetchAgain }) {
