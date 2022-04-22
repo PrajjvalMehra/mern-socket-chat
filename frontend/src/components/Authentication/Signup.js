@@ -48,7 +48,6 @@ const Signup = () => {
         .then((res) => res.json())
         .then((data) => {
           setPic(data.url.toString());
-          console.log(data.url.toString());
           setLoading(false);
         })
         .catch((err) => {
@@ -109,10 +108,10 @@ const Signup = () => {
         isClosable: "true",
         position: "top",
       });
-      console.log("SIGN UP DATA", data.data);
       localStorage.setItem("userInfo", JSON.stringify(data.data));
       setLoading(false);
       history.push("/chats");
+      window.location.reload();
     } catch (error) {
       toast({
         title: "Error Occured",

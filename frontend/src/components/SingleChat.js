@@ -1,9 +1,11 @@
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowRightIcon, Search2Icon } from "@chakra-ui/icons";
 import {
   Box,
   FormControl,
   IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
   Spinner,
   Text,
   useToast,
@@ -19,7 +21,8 @@ import "./styles.css";
 import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
-const ENDPOINT = "https://realtime-chat-socketio-app.herokuapp.com/";
+import environment from "./../config/environment";
+const ENDPOINT = environment.socketUrl;
 var socket, selectedChatCompare;
 
 function SingleChat({ fetchAgain, setFetchAgain }) {
@@ -104,9 +107,8 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
 
     // eslint-disable-next-line
   }, [selectedChat]);
-  console.log("NOTI", notification);
   const sendMessage = async (event) => {
-    if (event.key === "Enter" && newMessage) {
+    if ((event.key === "Enter" && newMessage) || event.key === undefined) {
       socket.emit("stop typing", selectedChat._id);
       try {
         const config = {
@@ -198,7 +200,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
             flexDir="column"
             justifyContent="flex-end"
             p={3}
-            bg="#E8E8E8"
+            bg="#D4F1F4"
             w="100%"
             h="100%"
             borderRadius="lg"
@@ -234,13 +236,25 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
               ) : (
                 <></>
               )}
-              <Input
-                variant="filled"
-                bg="#E0E0E0"
-                placeholder="Enter a message.."
-                value={newMessage}
-                onChange={typingHandler}
-              />
+              <InputGroup>
+                <Input
+                  variant="filled"
+                  bg="white"
+                  placeholder="Enter a message.."
+                  value={newMessage}
+                  onChange={typingHandler}
+                />
+                <InputRightElement>
+                  <IconButton
+                    onClick={sendMessage}
+                    size={"sm"}
+                    color="white"
+                    bgColor={"#21B6A8"}
+                    aria-label="Search database"
+                    icon={<ArrowRightIcon />}
+                  />
+                </InputRightElement>
+              </InputGroup>
             </FormControl>
           </Box>
         </>

@@ -41,19 +41,24 @@ const SideDrawer = () => {
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
   const toast = useToast();
-  const logoutHandler = () => {
-    localStorage.removeItem("userInfo");
-    history.push("/");
-  };
+
   const {
     setSelectedChat,
     user,
+    setUser,
     notification,
     setNotification,
     chats,
     setChats,
   } = ChatState();
-
+  const logoutHandler = () => {
+    setSelectedChat("");
+    setNotification("");
+    setChats("");
+    setUser("");
+    localStorage.removeItem("userInfo");
+    history.push("/");
+  };
   const handleSearch = async () => {
     if (!search) {
       toast({
@@ -68,7 +73,6 @@ const SideDrawer = () => {
 
     try {
       setLoading(true);
-      console.log(user.token);
       const config = {
         headers: {
           Authorization: `Bearer ${user.token}`,
@@ -89,11 +93,8 @@ const SideDrawer = () => {
       });
     }
   };
-  console.log("RESULT", searchResult);
 
   const accessChat = async (userId) => {
-    console.log(userId);
-
     try {
       setLoadingChat(true);
       const config = {
