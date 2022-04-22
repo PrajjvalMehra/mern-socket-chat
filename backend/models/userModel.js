@@ -8,6 +8,7 @@ const userModel = mongoose.Schema(
     pic: {
       type: String,
     },
+    isVerified: { type: Boolean, required: true, default: false },
   },
   {
     timestamps: true,

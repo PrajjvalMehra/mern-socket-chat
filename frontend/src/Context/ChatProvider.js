@@ -13,7 +13,8 @@ const ChatProvider = ({ children }) => {
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     setUser(userInfo);
-    if (!userInfo) history.push("/");
+    console.log(window.location);
+    if (!userInfo && window.location.pathname !== "/verify") history.push("/");
   }, [history]);
   return (
     <ChatContext.Provider

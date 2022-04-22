@@ -101,17 +101,19 @@ const Signup = () => {
         { name, email, password, pic },
         config
       );
+      
+      setLoading(false);
+      history.push("/");
+      window.location.reload();
       toast({
         title: "Registration Successful",
+        description:
+          "please verify your email by using the link sent to your registered email.",
         status: "success",
-        duration: "3000",
+        duration: "5000",
         isClosable: "true",
         position: "top",
       });
-      localStorage.setItem("userInfo", JSON.stringify(data.data));
-      setLoading(false);
-      history.push("/chats");
-      window.location.reload();
     } catch (error) {
       toast({
         title: "Error Occured",
