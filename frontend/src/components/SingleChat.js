@@ -151,7 +151,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
       socket.emit("typing", selectedChat._id);
     }
     let lastTypingTime = new Date().getTime();
-    var timerLength = 1000;
+    var timerLength = 4000;
     setTimeout(() => {
       var timeNow = new Date().getTime();
       var timeDiff = timeNow - lastTypingTime;
