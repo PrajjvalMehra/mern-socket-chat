@@ -71,7 +71,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
   };
 
   console.log(online);
-  const fetchMessages = async (userId, caseType) => {
+  const handleOnline = (userId, caseType) => {
     if (!selectedChat) return;
 
     if (
@@ -80,6 +80,9 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
     ) {
       return setOnline(caseType);
     }
+  };
+  const fetchMessages = async () => {
+    if (!selectedChat) return;
     try {
       const config = {
         headers: {
@@ -118,11 +121,11 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
     });
     socket.on("userOffline", (user) => {
       console.log("OFFLINE CALLED", user);
-      fetchMessages(user, false);
+      handleOnline(user, false);
     });
     socket.on("userReturned", (user) => {
       console.log("USER BACK ONLINE");
-      fetchMessages(user, true);
+      handleOnline(user, true);
     });
   });
   useEffect(() => {
@@ -142,9 +145,9 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
     });
   });
   useEffect(() => {
+    setOnline(false);
     fetchMessages();
     selectedChatCompare = selectedChat;
-    setOnline(false);
 
     // eslint-disable-next-line
   }, [selectedChat]);
