@@ -14,6 +14,9 @@ import {
   Text,
   Image,
   Avatar,
+  Code,
+  kbd,
+  Kbd,
 } from "@chakra-ui/react";
 
 const ProfileModal = ({ user, children }) => {
@@ -23,9 +26,14 @@ const ProfileModal = ({ user, children }) => {
       {children ? (
         <span onClick={onOpen}>{children}</span>
       ) : (
-        <IconButton d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
+        <IconButton
+          d={{ base: "flex" }}
+          icon={<Text>👀</Text>}
+          onClick={onOpen}
+          bgColor={"#D4F1F4"}
+        />
       )}
-      <Modal size="lg" onClose={onClose} isOpen={isOpen} isCentered>
+      <Modal size="md" onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent h="410px">
           <ModalHeader fontSize="40px" d="flex" justifyContent="center">
@@ -53,8 +61,14 @@ const ProfileModal = ({ user, children }) => {
                 src={user.pic}
               />
             )}
-            <Text fontSize={{ base: "28px", md: "30px" }}>
-              Email: {user.email}
+            <Text fontSize={{ base: "18px", md: "20px" }}>
+              <b>Email: </b>
+              <Code
+                colorScheme={"twitter"}
+                fontSize={{ base: "15px", md: "17px" }}
+              >
+                {user.email}
+              </Code>
             </Text>
           </ModalBody>
           <ModalFooter>

@@ -301,17 +301,6 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
               isRequired
               mt={3}
             >
-              {/* {istyping ? (
-                <div>
-                  <Lottie
-                    options={defaultOptions}
-                    width={60}
-                    style={{ marginBottom: 0, marginLeft: 10 }}
-                  />
-                </div>
-              ) : (
-                <></>
-              )} */}
               <InputGroup>
                 <Input
                   variant="filled"
