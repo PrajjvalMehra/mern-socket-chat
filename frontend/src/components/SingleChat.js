@@ -1,6 +1,7 @@
 import { ArrowBackIcon, ArrowRightIcon, Search2Icon } from "@chakra-ui/icons";
 import {
   Box,
+  Button,
   FormControl,
   IconButton,
   Input,
@@ -310,14 +311,17 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                   onChange={typingHandler}
                 />
                 <InputRightElement>
-                  <IconButton
-                    onClick={sendMessage}
-                    size={"sm"}
-                    color="white"
-                    bgColor={"#21B6A8"}
-                    aria-label="Search database"
-                    icon={<ArrowRightIcon />}
-                  />
+                  <Button
+                    bgColor={"transparent"}
+                    _hover={{ bgColor: "transparent" }}
+                  >
+                    <Text
+                      _hover={{ dropShadow: "5px 5px 5px #4444dd" }}
+                      onClick={sendMessage}
+                    >
+                      🚀
+                    </Text>
+                  </Button>
                 </InputRightElement>
               </InputGroup>
             </FormControl>
