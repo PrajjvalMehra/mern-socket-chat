@@ -31,6 +31,7 @@ import ChatLoading from "../ChatLoading";
 import UserListItem from "../userAvatar/UserListItem";
 import { getSender } from "../../config/ChatLogics";
 import NotificationBadge, { Effect } from "react-notification-badge";
+import socket from "../../Socket";
 
 const SideDrawer = () => {
   const history = useHistory();
@@ -50,8 +51,13 @@ const SideDrawer = () => {
     setNotification,
     chats,
     setChats,
+    globalSocket,
+    setGlobalSocket,
   } = ChatState();
   const logoutHandler = () => {
+    socket.disconnect(user);
+    sessionStorage.removeItem("sockOn");
+    setGlobalSocket("");
     setSelectedChat("");
     setNotification("");
     setChats("");

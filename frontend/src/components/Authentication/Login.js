@@ -55,7 +55,7 @@ const Login = () => {
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
-      
+      sessionStorage.setItem("sockOn", false);
       history.push("/chats");
       window.location.reload();
     } catch (error) {

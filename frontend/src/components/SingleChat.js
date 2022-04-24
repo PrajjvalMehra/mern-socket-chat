@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { getSender, getSenderFull } from "../config/ChatLogics";
+import { getSender, getSenderFull, includesUser } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
@@ -21,32 +21,46 @@ import "./styles.css";
 import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
-import environment from "./../config/environment";
-const ENDPOINT = environment.socketUrl;
-var socket, selectedChatCompare;
+import socketUrl from "./../config/environment";
+import socket from "../Socket";
+var selectedChatCompare;
 
 function SingleChat({ fetchAgain, setFetchAgain }) {
-  const { selectedChat, setSelectedChat, user, notification, setNotification } =
-    ChatState();
-
+  const {
+    selectedChat,
+    setSelectedChat,
+    user,
+    notification,
+    setNotification,
+    setGlobalSocket,
+    globalSocket,
+  } = ChatState();
+  const [chatUsers, setChatUsers] = useState();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
+  const [online, setOnline] = useState(false);
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
-
+  const set = sessionStorage.getItem("sockOn");
+  console.log("ONLINE", online);
   useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit("setup", user);
-    socket.on("connected", () => {
-      setSocketConnected(true);
-    });
+    if (set === "false") {
+      socket.emit("setup", user);
+      socket.on("connected", () => {
+        console.log("USER CONNECTED");
+        setSocketConnected(true);
+      });
+      sessionStorage.setItem("sockOn", true);
+    }
+
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
     // eslint-disable-next-line
   }, []);
+
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -55,9 +69,17 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-  const fetchMessages = async () => {
+
+  console.log(online);
+  const fetchMessages = async (userId, caseType) => {
     if (!selectedChat) return;
 
+    if (
+      selectedChat.users[0]._id === userId ||
+      (selectedChat.users[1]._id === userId && userId)
+    ) {
+      return setOnline(caseType);
+    }
     try {
       const config = {
         headers: {
@@ -72,7 +94,11 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
         config
       );
       setMessages(data);
-      socket.emit("join chat", selectedChat._id);
+      socket.emit("join chat", {
+        chatId: selectedChat._id,
+        users: selectedChat.users,
+      });
+
       setLoading(false);
     } catch (error) {
       toast({
@@ -85,7 +111,20 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
       });
     }
   };
-
+  useEffect(() => {
+    socket.on("userOnline", () => {
+      console.log("ONLINE CALLED");
+      setOnline(true);
+    });
+    socket.on("userOffline", (user) => {
+      console.log("OFFLINE CALLED", user);
+      fetchMessages(user, false);
+    });
+    socket.on("userReturned", (user) => {
+      console.log("USER BACK ONLINE");
+      fetchMessages(user, true);
+    });
+  });
   useEffect(() => {
     socket.on("message received", (newMessageReceived) => {
       setFetchAgain(!fetchAgain);
@@ -105,6 +144,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
   useEffect(() => {
     fetchMessages();
     selectedChatCompare = selectedChat;
+    setOnline(false);
 
     // eslint-disable-next-line
   }, [selectedChat]);
@@ -182,7 +222,35 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
             />
             {!selectedChat.isGroupChat ? (
               <>
-                {getSender(user, selectedChat.users)}
+                <>
+                  <Text
+                    width={"max-content"}
+                    fontSize={{ base: "0.8em", xl: "1em" }}
+                  >
+                    {getSender(user, selectedChat.users)}
+                  </Text>
+                  {online ? (
+                    <>
+                      <Text
+                        width={"max-content"}
+                        fontSize={{ base: "15px", md: "15px" }}
+                        marginRight={{ xl: "76%", sm: "none" }}
+                      >
+                        🟢
+                      </Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text
+                        width={"max-content"}
+                        fontSize={{ base: "15px", md: "15px" }}
+                        marginRight={{ xl: "76%", sm: "none" }}
+                      >
+                        🟡
+                      </Text>
+                    </>
+                  )}
+                </>
                 <ProfileModal user={getSenderFull(user, selectedChat.users)} />
               </>
             ) : (

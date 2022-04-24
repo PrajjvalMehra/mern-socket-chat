@@ -5,3 +5,5 @@ if (development === true) {
 } else {
   socketUrl = "https://realtime-chat-socketio-app.herokuapp.com/";
 }
+
+module.exports = socketUrl;

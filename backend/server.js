@@ -53,17 +53,30 @@ const io = require("socket.io")(server, {
     origin: "http://localhost:3000",
   },
 });
-
+let users = {};
 io.on("connection", (socket) => {
-  console.log("connect to socket.io");
+  console.log("connect to socket.io", users);
+
   socket.on("setup", (userData) => {
+    console.log(io.sockets.adapter.rooms.get(socket.id));
     socket.join(userData._id);
+    users[socket.id] = userData._id;
     console.log(userData._id);
+    console.log("JOINED USERS", users);
     socket.emit("connected");
+    socket.broadcast.emit("userReturned", userData._id);
   });
-  socket.on("join chat", (room) => {
-    socket.join(room);
-    console.log("User joned room: " + room);
+  socket.on("join chat", (chat) => {
+    socket.join(chat.chatId);
+    console.log("User joned room: " + chat.chatId);
+    console.log(io.sockets.adapter.rooms.get(chat.chatId));
+    for (let user of chat.users) {
+      for (let id in users) {
+        if (socket.id !== id && user._id === users[id]) {
+          socket.emit("userOnline", { isOnline: true });
+        }
+      }
+    }
   });
   socket.on("new message", (newMessageReceived) => {
     var chat = newMessageReceived.chat;
@@ -77,6 +90,21 @@ io.on("connection", (socket) => {
   });
   socket.on("typing", (room) => socket.in(room).emit("typing"));
   socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+  socket.on("isOnline", ({ data }) => {
+    if (Object.keys(users[userId]).length === 1) {
+      socket.in();
+    }
+  });
+
+  socket.on("disconnect", (userData) => {
+    console.log("user logged out", socket.id, userData);
+
+    socket.broadcast.emit("userOffline", users[socket.id]);
+    delete users[socket.id];
+    socket.leave(userData._id);
+
+    console.log("LOGGED IN", users);
+  });
 
   socket.off("setup", () => {
     console.log("USER DISCONNECTED");
