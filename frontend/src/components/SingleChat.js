@@ -225,35 +225,39 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
             />
             {!selectedChat.isGroupChat ? (
               <>
-                <>
+                {online ? (
                   <Text
+                    display={"flex"}
                     width={"max-content"}
                     fontSize={{ base: "0.8em", xl: "1em" }}
                   >
-                    {getSender(user, selectedChat.users)}
+                    {getSender(user, selectedChat.users)}&nbsp;
+                    <Text
+                      fontSize={{ base: "md" }}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      display={"flex"}
+                    >
+                      🟢 {istyping ? <>💬</> : <></>}
+                    </Text>
                   </Text>
-                  {online ? (
-                    <>
-                      <Text
-                        width={"max-content"}
-                        fontSize={{ base: "15px", md: "15px" }}
-                        marginRight={{ xl: "76%", sm: "none" }}
-                      >
-                        🟢
-                      </Text>
-                    </>
-                  ) : (
-                    <>
-                      <Text
-                        width={"max-content"}
-                        fontSize={{ base: "15px", md: "15px" }}
-                        marginRight={{ xl: "76%", sm: "none" }}
-                      >
-                        🟡
-                      </Text>
-                    </>
-                  )}
-                </>
+                ) : (
+                  <Text
+                    width={"max-content"}
+                    display={"flex"}
+                    fontSize={{ base: "0.8em", xl: "1em" }}
+                  >
+                    {getSender(user, selectedChat.users)}&nbsp;
+                    <Text
+                      fontSize={{ base: "md" }}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                      display={"flex"}
+                    >
+                      🟡
+                    </Text>
+                  </Text>
+                )}
                 <ProfileModal user={getSenderFull(user, selectedChat.users)} />
               </>
             ) : (
@@ -297,7 +301,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
               isRequired
               mt={3}
             >
-              {istyping ? (
+              {/* {istyping ? (
                 <div>
                   <Lottie
                     options={defaultOptions}
@@ -307,7 +311,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                 </div>
               ) : (
                 <></>
-              )}
+              )} */}
               <InputGroup>
                 <Input
                   variant="filled"
